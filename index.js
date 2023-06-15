@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const port = 3000;
 // const bodyParser = require("body-parser");
-
+const username = encodeURIComponent("abc00127");
+const password = encodeURIComponent("rlagmlwl@7");
 //application/x-www-form-urlencoded 를 분석하여 가져옴
 app.use(express.urlencoded({ extended: true }));
 //application/json 형태의 파일을 분석하여 가져올 수 있게 함.
@@ -12,11 +13,7 @@ const { User } = require("./models/User"); //user가져오기
 const mongoose = require("mongoose");
 mongoose
   .connect(
-    "mongodb+srv://abc00127:rlagmlwl@7@cluster0.hcc2lq1.mongodb.net/?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
+    `mongodb+srv://${username}:${password}@cluster0.hcc2lq1.mongodb.net/?retryWrites=true&w=majority`
   )
   .then(() => console.log("connect"))
   .catch((err) => console.log(err));
