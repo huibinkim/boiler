@@ -56,7 +56,8 @@ userSchema.pre('save', function (next) {
 
 userSchema.methods.comparePassword = function (plainPassword, callback) {
   //plainPassword 12324567를 암호화해서 비교해야한다.
-  bcrypt.compare(plainPassword, this.password),
+  const user = this;
+  bcrypt.compare(plainPassword, user.password),
     function (err, isMatch) {
       if (err) return callback(err);
       callback(null, isMatch);
@@ -66,7 +67,7 @@ userSchema.methods.comparePassword = function (plainPassword, callback) {
 userSchema.generateToken = function (callback) {
   const user = this;
   //jsonwebtoken 이용해서 토큰생성
-  const token = jwt.sign(user._id, 'secretToken');
+  const token = jwt.sign(user._id.toHexString(), 'secretToken');
   user.token = token;
   user.save(function (err, user) {
     if (err) return callback(err);
