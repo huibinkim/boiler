@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-// const myPlaintextPassword = 's0//P4$$w0rD';
-// const someOtherPlaintextPassword = 'not_bacon';
+const jwt = require('jsonwebtoken');
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -49,8 +48,31 @@ userSchema.pre('save', function (next) {
         next();
       });
     });
+  } else {
+    //비번아니면 그냥 넘어가기
+    next();
   }
 });
+
+userSchema.methods.comparePassword = function (plainPassword, callback) {
+  //plainPassword 12324567를 암호화해서 비교해야한다.
+  bcrypt.compare(plainPassword, this.password),
+    function (err, isMatch) {
+      if (err) return callback(err);
+      callback(null, isMatch);
+    };
+};
+
+userSchema.generateToken = function (callback) {
+  const user = this;
+  //jsonwebtoken 이용해서 토큰생성
+  const token = jwt.sign(user._id, 'secretToken');
+  user.token = token;
+  user.save(function (err, user) {
+    if (err) return callback(err);
+    callback(null, user);
+  });
+};
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User };
